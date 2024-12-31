@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Professional Fireworks Animation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.1/flowbite.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="bg-gray-900 min-h-screen overflow-hidden cursor-pointer">
+    <canvas id="fireworksCanvas" class="fixed top-0 left-0 w-full h-full"></canvas>
+
+    <div class="fixed top-4 left-4 z-50 bg-gray-800/90 backdrop-blur p-4 rounded-lg shadow-lg text-white w-72">
+        <div class="flex flex-col gap-4 max-h-[calc(100vh-2rem)] overflow-y-auto custom-scrollbar">
+            <!-- Header -->
+            <div class="flex justify-between items-center">
+                <h2 class="text-lg font-bold">Fireworks Control Panel</h2>
+                <button id="minimizePanel" class="text-gray-400 hover:text-white">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                    </svg>
+                </button>
+            </div>
+
+            <div class="space-y-3">
+                <h3 class="font-semibold text-sm uppercase text-gray-400">Launch Configuration</h3>
+
+                <div>
+                    <label class="block text-sm mb-1">Firework Type</label>
+                    <select id="fireworkType" class="w-full bg-gray-700 text-white rounded-lg p-2 text-sm">
+                        <option value="normal">Classic Burst</option>
+                        <option value="spiral">Spiral</option>
+                        <option value="heart">Heart Pattern</option>
+                        <option value="burst">Super Burst</option>
+                        <option value="willow">Willow</option>
+                        <option value="crossette">Crossette</option>
+                        <option value="ring">Ring</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-sm mb-1">Color Pattern</label>
+                    <select id="colorTheme" class="w-full bg-gray-700 text-white rounded-lg p-2 text-sm">
+                        <option value="random">Random</option>
+                        <option value="rainbow">Rainbow</option>
+                        <option value="gold">Golden Hour</option>
+                        <option value="blue">Ocean Blue</option>
+                        <option value="green">Forest</option>
+                        <option value="purple">Royal Purple</option>
+                        <option value="custom">Custom Gradient</option>
+                    </select>
+                </div>
+
+                <div id="customColorPicker" class="hidden space-y-2">
+                    <div class="flex gap-2">
+                        <input type="color" id="colorStart" class="w-1/2 h-8 rounded bg-gray-700" value="#ff0000">
+                        <input type="color" id="colorEnd" class="w-1/2 h-8 rounded bg-gray-700" value="#0000ff">
+                    </div>
+                </div>
+            </div>
+
+            <div class="space-y-3">
+                <h3 class="font-semibold text-sm uppercase text-gray-400">Physics Settings</h3>
+
+                <div>
+                    <label class="block text-sm mb-1">Gravity</label>
+                    <input type="range" id="gravity" min="0" max="0.2" step="0.01" value="0.1"
+                        class="range-slider w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer">
+                    <div class="flex justify-between text-xs text-gray-400">
+                        <span>Low</span>
+                        <span>High</span>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm mb-1">Particle Count</label>
+                    <input type="range" id="particleCount" min="20" max="200" step="10" value="50"
+                        class="range-slider w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer">
+                    <div class="flex justify-between text-xs text-gray-400">
+                        <span>20</span>
+                        <span>200</span>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm mb-1">Trail Length</label>
+                    <input type="range" id="trailLength" min="0" max="1" step="0.1" value="0.3"
+                        class="range-slider w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer">
+                    <div class="flex justify-between text-xs text-gray-400">
+                        <span>None</span>
+                        <span>Long</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="space-y-3">
+                <h3 class="font-semibold text-sm uppercase text-gray-400">Launch Controls</h3>
+
+                <div class="grid grid-cols-2 gap-2">
+                    <button id="singleLaunch" class="bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded-lg text-sm">
+                        Single Point
+                    </button>
+                    <button id="multiLaunch" class="bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded-lg text-sm">
+                        Multi Point
+                    </button>
+                </div>
+
+                <div class="flex items-center justify-between">
+                    <span class="text-sm">Auto Launch</span>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="autoLaunch" class="sr-only peer">
+                        <div
+                            class="w-11 h-6 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600">
+                        </div>
+                    </label>
+                </div>
+
+                <div id="launchRateControl" class="hidden">
+                    <label class="block text-sm mb-1">Launch Rate</label>
+                    <input type="range" id="launchRate" min="1" max="10" step="1" value="5"
+                        class="range-slider w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer">
+                    <div class="flex justify-between text-xs text-gray-400">
+                        <span>Slow</span>
+                        <span>Fast</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="space-y-3">
+                <h3 class="font-semibold text-sm uppercase text-gray-400">Sound Settings</h3>
+
+                <div class="flex items-center justify-between">
+                    <span class="text-sm">Background Music</span>
+                    <button id="audioControl"
+                        class="bg-gray-700 hover:bg-gray-600 px-3 py-1 rounded-lg text-sm flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M15.536 8.464a5 5 0 010 7.072M18.364 5.636a9 9 0 010 12.728M12 6.343l-3-3H5v6h4l3-3z" />
+                        </svg>
+                        <span>ON</span>
+                    </button>
+                </div>
+
+                <div class="flex items-center justify-between">
+                    <span class="text-sm">Sound Effects</span>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="soundEffects" class="sr-only peer" checked>
+                        <div
+                            class="w-11 h-6 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600">
+                        </div>
+                    </label>
+                </div>
+
+                <div>
+                    <label class="block text-sm mb-1">Volume</label>
+                    <input type="range" id="volume" min="0" max="1" step="0.1" value="0.5"
+                        class="range-slider w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer">
+                </div>
+            </div>
+
+            <div class="space-y-3">
+                <h3 class="font-semibold text-sm uppercase text-gray-400">Performance Stats</h3>
+                <div class="bg-gray-700/50 p-3 rounded-lg space-y-2">
+                    <div class="flex justify-between text-sm">
+                        <span>Active Fireworks:</span>
+                        <span id="fireworkCount">0</span>
+                    </div>
+                    <div class="flex justify-between text-sm">
+                        <span>Active Particles:</span>
+                        <span id="particleCount">0</span>
+                    </div>
+                    <div class="flex justify-between text-sm">
+                        <span>FPS:</span>
+                        <span id="fpsCount">0</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="space-y-3">
+                <h3 class="font-semibold text-sm uppercase text-gray-400">Presets</h3>
+                <div class="grid grid-cols-2 gap-2">
+                    <button onclick="loadPreset('celebration')"
+                        class="bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded-lg text-sm">
+                        Celebration
+                    </button>
+                    <button onclick="loadPreset('romantic')"
+                        class="bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded-lg text-sm">
+                        Romantic
+                    </button>
+                    <button onclick="loadPreset('intense')"
+                        class="bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded-lg text-sm">
+                        Intense
+                    </button>
+                    <button onclick="loadPreset('gentle')"
+                        class="bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded-lg text-sm">
+                        Gentle
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 md:hidden">
+        <div class="bg-gray-800/90 backdrop-blur p-2 rounded-full flex gap-2">
+            <button id="mobileAutoFire" class="bg-gray-700 hover:bg-gray-600 p-3 rounded-full">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+            </button>
+            <button id="mobileSettings" class="bg-gray-700 hover:bg-gray-600 p-3 rounded-full">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <button id="helpButton"
+        class="fixed bottom-4 right-4 z-50 bg-gray-800 text-white rounded-full w-10 h-10 flex items-center justify-center">
+        ?
+    </button>
+
+    <div id="helpModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+        <div class="bg-gray-800 text-white p-6 rounded-lg max-w-md">
+            <h2 class="text-xl font-bold mb-4">Controls & Shortcuts</h2>
+            <div class="space-y-4">
+                <div>
+                    <h3 class="font-semibold mb-2">Keyboard Shortcuts</h3>
+                    <ul class="space-y-2">
+                        <li><kbd class="bg-gray-700 px-2 py-1 rounded">Space</kbd> - Toggle auto-fire</li>
+                        <li><kbd class="bg-gray-700 px-2 py-1 rounded">1-7</kbd> - Change firework type</li>
+                        <li><kbd class="bg-gray-700 px-2 py-1 rounded">C</kbd> - Cycle color themes</li>
+                        <li><kbd class="bg-gray-700 px-2 py-1 rounded">M</kbd> - Toggle music</li>
+                        <li><kbd class="bg-gray-700 px-2 py-1 rounded">S</kbd> - Toggle sound effects</li>
+                        <li><kbd class="bg-gray-700 px-2 py-1 rounded">P</kbd> - Toggle control panel</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="font-semibold mb-2">Mouse Controls</h3>
+                    <ul class="space-y-2">
+                        <li>Click - Launch single firework</li>
+                        <li>Double Click - Launch burst of fireworks</li>
+                        <li>Right Click - Launch special effect</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="font-semibold mb-2">Touch Controls</h3>
+                    <ul class="space-y-2">
+                        <li>Tap - Launch firework</li>
+                        <li>Long Press - Launch burst</li>
+                        <li>Two Finger Tap - Special effect</li>
+                    </ul>
+                </div>
+            </div>
+            <button class="mt-6 bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded-lg w-full"
+                onclick="document.getElementById('helpModal').classList.add('hidden')">
+                Close
+            </button>
+        </div>
+    </div>
+
+    <audio id="festiveMusic" loop>
+        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mp3">
+    </audio>
+    <audio id="launchSound"
+        src="data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4Ljc2LjEwMAAAAAAAAAAAAAAA/+M4wAAAAAAAAAAAAEluZm8AAAAPAAAAEAAABVgANTU1NTU1Q0NDQ0NDUFBQUFBQXl5eXl5ea2tra2tra3l5eXl5eYaGhoaGhpSUlJSUlKGhoaGhoaGvr6+vr6+8vLy8vLzKysrKysrX19fX19fX5eXl5eXl8vLy8vLy////////AAAAAExhdmM1OC4xMwAAAAAAAAAAAAAAACQCgAAAAAAAAAVY82AhbwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/+MYxAALACwAAP/AADwQKVE9YWDGPkQWpT66yk4+zIiYPoTUaT3tnU+OQYc0jpX9L/MR0g7wwyQlJ/5iDFx+Pt5jPE/+MYxAsLGAYMAP+eABEczobzGCD5M5WaDd0LmGvqoHhgZXwfebjI5xxyDdE/3BPCKkxBA0ClIGdjtUH/MRqu0CF2dnZ2D4/+MYxBELAAYAAP/eAA9J/IxlH+LlKWOKK7y7fV1kjkvtXcvuQZ2dqiGRnY20R0/UqWcaHOCoQIGdnaWRnZ2thaWFpYG1d/+MYxBoK4BY8AP+0ACkwH8T0JBEiKzEZk9qIKi5n0NWVhYkFQTB3TCYhEaIwqZUYlE4pGhDvV6HPqPz6j1HNkz5OhVY2P/+MYxCkJ4AZEAP/EABO5DeX5OLBkqx+TSwsX1i5OLHxfV5YuLF9YuTixfWLi+r6vq+r+XixcX1fV//1eXixf6vq+sXF9Y//+MYxDwAAANIAAAAAF9X1fV9XlixcX1i4vq+r6vq8X1eX1i4vq8sX1fV9X1eX1eWLixcX1fV9X1fV9X1fV9X1fV9X1f/+MYxFQAAANIAAAAAF9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1f/+MYxGgAAANIAAAAAF9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1f/+MYxHQAAANIAAAAAF9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1f/+MYxIAAAANIAAAAAF9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1f/+MYxIwAAANIAAAAAF9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1f/+MYxJQAAANIAAAAAF9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1f/+MYxJwAAANIAAAAAF9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1f/+MYxKQAAANIAAAAAF9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1f/+MYxKwAAANIAAAAAF9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1f/+MYxLQAAANIAAAAAF9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1f" />
+    <audio id="explosionSound"
+        src="data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4Ljc2LjEwMAAAAAAAAAAAAAAA/+M4wAAAAAAAAAAAAEluZm8AAAAPAAAAEAAABVgANTU1NTU1Q0NDQ0NDUFBQUFBQXl5eXl5ea2tra2tra3l5eXl5eYaGhoaGhpSUlJSUlKGhoaGhoaGvr6+vr6+8vLy8vLzKysrKysrX19fX19fX5eXl5eXl8vLy8vLy////////AAAAAExhdmM1OC4xMwAAAAAAAAAAAAAAACQCgAAAAAAAAAVY82AhbwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/+MYxAALACwAAP/AADwQKVE9YWDGPkQWpT66yk4+zIiYPoTUaT3tnU+OQYc0jpX9L/MR0g7wwyQlJ/5iDFx+Pt5jPE/+MYxAsLGAYMAP+eABEczobzGCD5M5WaDd0LmGvqoHhgZXwfebjI5xxyDdE/3BPCKkxBA0ClIGdjtUH/MRqu0CF2dnZ2D4/+MYxBELAAYAAP/eAA9J/IxlH+LlKWOKK7y7fV1kjkvtXcvuQZ2dqiGRnY20R0/UqWcaHOCoQIGdnaWRnZ2thaWFpYG1d/+MYxBoK4BY8AP+0ACkwH8T0JBEiKzEZk9qIKi5n0NWVhYkFQTB3TCYhEaIwqZUYlE4pGhDvV6HPqPz6j1HNkz5OhVY2P/+MYxCkJ4AZEAP/EABO5DeX5OLBkqx+TSwsX1i5OLHxfV5YuLF9YuTixfWLi+r6vq+r+XixcX1fV//1eXixf6vq+sXF9Y//+MYxDwAAANIAAAAAF9X1fV9XlixcX1i4vq+r6vq8X1eX1i4vq8sX1fV9X1eX1eWLixcX1fV9X1fV9X1fV9X1fV9X1f/+MYxFQAAANIAAAAAF9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1f/+MYxGgAAANIAAAAAF9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1f/+MYxHQAAANIAAAAAF9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1f/+MYxIAAAANIAAAAAF9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1f/+MYxIwAAANIAAAAAF9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1f/+MYxJQAAANIAAAAAF9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1f/+MYxJwAAANIAAAAAF9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1f/+MYxKQAAANIAAAAAF9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1f/+MYxKwAAANIAAAAAF9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1f/+MYxLQAAANIAAAAAF9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1fV9X1f" />
+    <script src="main.js"></script>
+</body>
+
+</html>
